@@ -1,3 +1,10 @@
+<script>
+  $(document).ready(function(){
+    $("#my-click").click(function(){
+      $("#foo").text(" zoo")
+    })
+  })
+</script>
 <p>
   <a id='my-click'>Click Me</a>
 </p>
@@ -6,11 +13,3 @@
     bar
   </p>
 </div>
-<script>
-  console.log("checkpoint A");
-  $("#my-click").click(function(){
-    $("#foo").html('<h1>zoo</h1>');
-    console.log("checkpoint C");
-  })
-  console.log("checkpoint B");
-</script>
