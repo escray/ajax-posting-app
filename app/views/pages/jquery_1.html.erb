@@ -1,0 +1,16 @@
+<p>
+  <a id='my-click'>Click Me</a>
+</p>
+<div id='foo' style='border: 1px solid red;'>
+  <p>
+    bar
+  </p>
+</div>
+<script>
+  console.log("checkpoint A");
+  $("#my-click").click(function(){
+    $("#foo").html('<h1>zoo</h1>');
+    console.log("checkpoint C");
+  })
+  console.log("checkpoint B");
+</script>
