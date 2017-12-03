@@ -2,6 +2,7 @@
 class PostsController < ApplicationController
   before_action :authenticate_user!, only: %i[create destroy]
   before_action :set_post, only: %i[like unlike favorite unfavorite]
+  skip_before_action :verify_authenticity_token, only: :destroy
 
   def index
     @posts = Post.order('id DESC').all
@@ -23,6 +24,8 @@ class PostsController < ApplicationController
   def destroy
     @post = current_user.posts.find(params[:id])
     @post.destroy
+
+    render json: { id: @post.id }
   end
 
   def like
