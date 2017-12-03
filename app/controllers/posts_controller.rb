@@ -35,7 +35,7 @@ class PostsController < ApplicationController
     @post = Post.find(params[:id])
     like = @post.find_like(current_user)
     like.destroy
-    redirct_to posts_path
+    render :like
   end
 
   private
