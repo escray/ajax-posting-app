@@ -39,7 +39,7 @@ gem 'jquery-rails'
 gem 'bootstrap-sass'
 
 gem 'devise'
-
+gem 'font-awesome-sass'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution

@@ -1,0 +1,9 @@
+<% if current_user %>
+  <% if post.find_favorite(current_user) %>
+    <%= link_to "unfavorite", unfavorite_post_path(post),
+      method: :post, remote: true, class: "btn btn-info" %>
+  <% else %>
+    <%= link_to "favorite", favorite_post_path(post),
+      method: :post, remote: true, class: "btn btn-info" %>
+  <% end %>
+<% end %>

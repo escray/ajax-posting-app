@@ -1,6 +1,7 @@
 #
 class PostsController < ApplicationController
   before_action :authenticate_user!, only: %i[create destroy]
+  before_action :set_post, only: %i[like unlike favorite unfavorite]
 
   def index
     @posts = Post.order('id DESC').all
@@ -25,20 +26,34 @@ class PostsController < ApplicationController
   end
 
   def like
-    @post = Post.find(params[:id])
     unless @post.find_like(current_user)
       Like.create(user: current_user, post: @post)
     end
   end
 
   def unlike
-    @post = Post.find(params[:id])
     like = @post.find_like(current_user)
     like.destroy
     render :like
   end
 
+  def favorite
+    unless @post.find_favorite(current_user)
+      Favorite.create(user: current_user, post: @post)
+    end
+  end
+
+  def unfavorite
+    favorite = @post.find_favorite(current_user)
+    favorite.destroy
+    render :favorite
+  end
+
   private
+
+  def set_post
+    @post = Post.find(params[:id])
+  end
 
   def post_params
     params.require(:post).permit(:content)
