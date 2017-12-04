@@ -5,7 +5,14 @@ class PostsController < ApplicationController
   skip_before_action :verify_authenticity_token, only: :destroy
 
   def index
-    @posts = Post.order('id DESC').all
+    @posts = Post.order('id DESC').limit(10)
+
+    @posts = @posts.where('id < ?', params[:max_id]) if params[:max_id]
+
+    respond_to do |format|
+      format.html
+      format.js
+    end
   end
 
   def new
