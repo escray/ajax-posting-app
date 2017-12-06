@@ -13,13 +13,15 @@
 </div>
 <script>
   // 这会绑 click 事件到所有有 `.delete-post` class 的元素上，也就是所有的删除按钮
-  $(".delete-post").click(function(evt){
+  // $(".delete-post").click(function(evt){
+  // Bubble Up
+  $("#post-list").on('click', ".delete-post", function(evt){
     // `evt` 是浏览器的事件物件，evt.preventDefault(); 会终止这个元素的默认行为：
     // 超连结 a 的默认行为是跳到下一页，如果没有这行的话，送出 ajax 后会跳去 show page
     evt.preventDefault();
     // this 是个特别的变量，代表触发事件的元素。使用 attr 可以读取元素的属性，这里要拿到超连结的网址
     var url = $(this).attr("href");
-    console.log(url);
+    var that = this;
   
     // 送出 Ajax
     $.ajax({
@@ -31,12 +33,12 @@
       // data 就是服务器回传的 JSON 资料
       success: function(data){
         console.log("success");
-        $("#post-" + data["id"]).remove();
+        // $("#post-" + data["id"]).remove();
+        $(that).closest(".panel").remove();
       }
     });
   });
-</script>
-<script>
+  
   // 记下目前画面最小的贴文 ID
   var current_post_id = <%= @posts.last.id %>;
   
@@ -56,4 +58,40 @@
       }
     }
   })
+  
+  //$(".toggle-flag").on("change", function(){
+  $("#post-list").on('change', ".toggle-flag", function(){
+    var url = $(this).data("url");
+    var that = this;
+  
+    $.ajax({
+      url: url,
+      method: "POST",
+      dataType: "json",
+      success: function(data){
+  
+        if (data["flag_at"]) {
+          // $("#post-flag-" + data["id"]).html(data["flag_at"]);
+          $(that).closest("label").find("span").html(data["flag_at"]);
+        } else {
+          // $("#post-flag-" + data["id"]).html("");
+          $(that).closest("label").find("span").html("")
+        }
+      }
+    });
+  });
+  
+  $("#post-list").on('change', ".select_category", function(){
+    var url = $(this).data("url");
+    $.ajax({
+      url: url,
+      method: "PATCH",
+      dataType: "json",
+      data: {
+        post: {
+          category_id: $(this).val()
+        }
+      }
+    });
+  });
 </script>

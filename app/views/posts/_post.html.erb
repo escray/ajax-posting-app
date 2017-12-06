@@ -3,27 +3,41 @@
     <%= post.user.display_name %>
   </div>
   <div class="panel-body">
-
     <br />
     <%= post.content %>
-    <br  />
-<span id="post-thumbsup-<%= post.id %>" class="label label-success">
-  <%= post.likes.count %> 👍
-</span>
-&nbsp;
-<span id="post-redheart-<%= post.id %>" class="label label-info">
-  <%= post.favorites.count %>&nbsp;&nbsp;<i class="fa fa-heart" style="color: red" aria-hidden="true"> </i>
-</span>
-<div class="text-right">
-  <span id="post-like-<%= post.id %>">
-    <%= render partial: "like", locals: { post: post } %>
-  </span>
-  <span id="post-favorite-<%= post.id %>">
-    <%= render partial: "favorite", locals: { post: post } %>
-  </span>
-  <% if current_user && post.user == current_user %>
-    <%= link_to "Delete", post_path(post), class: "delete-post btn btn-danger"%>
-  <% end %>
-</div>
-</div>
+    <span id="post-thumbsup-<%= post.id %>" class="label label-success">
+      <%= post.likes.count %> 👍
+    </span>
+    &nbsp;
+    <span id="post-redheart-<%= post.id %>" class="label label-info">
+      <%= post.favorites.count %>&nbsp;&nbsp;<i class="fa fa-heart" style="color: red" aria-hidden="true"> </i>
+    </span>
+    <div class="text-right">
+      <span id="post-like-<%= post.id %>">
+        <%= render partial: "like", locals: { post: post } %>
+      </span>
+      <span id="post-favorite-<%= post.id %>">
+        <%= render partial: "favorite", locals: { post: post } %>
+      </span>
+      <% if current_user && post.user == current_user %>
+        <%= link_to "Delete", post_path(post), class: "delete-post btn btn-danger"%>
+      <% end %>
+    </div>
+  </div>
+  <div class="panel-footer">
+    <% if current_user && current_user.admin? %>
+      <%= select_tag "category_id[#{post.id}]",
+      options_for_select(Category.all.map{ |x| [x.name, x.id]},
+      post.category_id),
+      data: { url: post_path(post) },
+      prompt: "请选择分类",
+      class: "select_category" %>
+      <label>
+        <%= check_box_tag "mark_flag[#{post.id}]", 1, post.flag_at.present?,
+          data: { url: toggle_flag_post_path(post) }, class: "toggle-flag" %>
+        标记为垃圾
+        <span id="post-flag-<%= post.id %>"><%= post.flag_at %></span>
+      </label>
+    <% end %>
+  </div>
 </div>

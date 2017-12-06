@@ -1,8 +1,10 @@
 #
 class PostsController < ApplicationController
   before_action :authenticate_user!, only: %i[create destroy]
-  before_action :set_post, only: %i[like unlike favorite unfavorite]
-  skip_before_action :verify_authenticity_token, only: :destroy
+  before_action :set_post,
+                only: %i[like unlike favorite unfavorite toggle_flag update]
+  skip_before_action :verify_authenticity_token,
+                     only: %i[destroy toggle_flag update]
 
   def index
     @posts = Post.order('id DESC').limit(10)
@@ -26,6 +28,12 @@ class PostsController < ApplicationController
     else
       render :new
     end
+  end
+
+  def update
+    @post.update!(post_params)
+
+    render json: { id: @post.id, message: 'ok' }
   end
 
   def destroy
@@ -59,6 +67,17 @@ class PostsController < ApplicationController
     render :favorite
   end
 
+  def toggle_flag
+    @post.flag_at = if @post.flag_at
+                      nil
+                    else
+                      Time.now
+                    end
+
+    @post.save!
+    render json: { message: 'ok', flag_at: @post.flag_at, id: @post.id }
+  end
+
   private
 
   def set_post
@@ -66,6 +85,6 @@ class PostsController < ApplicationController
   end
 
   def post_params
-    params.require(:post).permit(:content)
+    params.require(:post).permit(:content, :category_id)
   end
 end
