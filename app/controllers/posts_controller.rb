@@ -2,9 +2,10 @@
 class PostsController < ApplicationController
   before_action :authenticate_user!, only: %i[create destroy]
   before_action :set_post,
-                only: %i[like unlike favorite unfavorite toggle_flag update]
+                only: %i[like unlike favorite unfavorite
+                         toggle_flag update rate]
   skip_before_action :verify_authenticity_token,
-                     only: %i[destroy toggle_flag update]
+                     only: %i[destroy toggle_flag update rate]
 
   def index
     @posts = Post.order('id DESC').limit(10)
@@ -31,6 +32,7 @@ class PostsController < ApplicationController
   end
 
   def update
+    sleep(1)
     @post.update!(post_params)
 
     render json: { id: @post.id, message: 'ok' }
@@ -76,6 +78,17 @@ class PostsController < ApplicationController
 
     @post.save!
     render json: { message: 'ok', flag_at: @post.flag_at, id: @post.id }
+  end
+
+  def rate
+    existing_score = @post.find_score(current_user)
+    if existing_score
+      existing_score.update(score: params[:score])
+    else
+      @post.scores.create(score: params[:score], user: current_user)
+    end
+
+    render json: { average_score: @post.average_score }
   end
 
   private
